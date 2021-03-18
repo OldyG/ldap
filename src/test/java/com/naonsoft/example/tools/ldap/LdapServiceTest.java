@@ -21,26 +21,28 @@ import org.springframework.util.StopWatch.TaskInfo;
 
 import com.naonsoft.example.tools.tree.Tree;
 
-class LdapConnectionTest {
+class LdapServiceTest {
 
 	private static String LDAP_URL;
 
-	private LdapConnection target;
+	private LdapService target;
 
 	@BeforeAll
 	static void setup2() throws IOException {
 
-		URL resource = LdapConnectionTest.class.getResource("ldapUrl.txt");
+		URL resource = LdapServiceTest.class.getResource("ldapUrl.txt");
 		File file = new File(resource.getFile());
 		LDAP_URL = Files.readAllLines(file.toPath()).stream()
 				.findFirst()
 				.orElseThrow(() -> new IllegalArgumentException("ldapUrl을 찾을 수 없음"));
+
 	}
 
 	@BeforeEach
 	void setup() {
 
-		this.target = new LdapConnection(LDAP_URL);
+		LdapConnection connection = new LdapConnection(LDAP_URL);
+		this.target = new LdapService(connection);
 	}
 
 	@Test
@@ -51,13 +53,6 @@ class LdapConnectionTest {
 		for (LdapNode ldapNode : childs) {
 			System.out.println(ldapNode);
 		}
-	}
-
-	@Test
-	void test2() {
-
-		List<LdapNode> privites = this.target.getChilds("DN: o=private of korea,c=kr");
-
 	}
 
 	@Test
